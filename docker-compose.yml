@@ -1,0 +1,12 @@
+version: '3'
+services:
+  cdk_fastapi:
+    build: .
+    networks:
+      - cdkfastapinet
+    ports:
+      - "8000:8000"
+
+networks:
+  cdkfastapinet:
+    driver: "bridge"

@@ -1,6 +1,6 @@
 # CDK FastAPI example
 
-Quick and dirty FastAPI API to play a bit with CDK
+Quick and dirty [FastAPI](https://github.com/tiangolo/fastapi) API to play a bit with [CDK](https://github.com/cdk/cdk)
 
 - Clone the repo and build the image.
 
@@ -14,7 +14,7 @@ Quick and dirty FastAPI API to play a bit with CDK
   docker compose up -d
   ```
 
-- Open jupyter notebook with the browser:
+- Open FastAPI docs:
 
   http://localhost:8000/docs
 

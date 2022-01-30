@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from starlette.responses import Response
 from starlette.requests import Request
 from pydantic import BaseModel
-from .cdk import *
+from .java import *
 import jpype
 
 
@@ -88,4 +88,14 @@ async def depictSmiles(item: Item):
     else:
         raise HTTPException(
             status_code=500, detail=f"depictSmiles failed for {item.structure}"
+        )
+
+@app.post("/opsin")
+async def n2s(item: Item):
+    smiles = name2structure(item.structure)
+    if smiles:
+        return {"smiles": str(smiles)}
+    else:
+        raise HTTPException(
+            status_code=500, detail=f"opsin failed for {item.structure}"
         )

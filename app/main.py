@@ -2,12 +2,25 @@ from fastapi import FastAPI, HTTPException
 from starlette.responses import Response
 from starlette.requests import Request
 from pydantic import BaseModel
+from typing import Optional
 from .java import *
 import jpype
 
 
-class Item(BaseModel):
+class Structure(BaseModel):
     structure: str
+    gen_coords: Optional[bool] = False
+
+class Depict(BaseModel):
+    structure: str
+    heigth: Optional[int] = 50
+    width: Optional[int] = 50
+    gen_coords: Optional[bool] = False
+
+class Convert(BaseModel):
+    structure: str
+    out_format: str
+    gen_coords: Optional[bool] = False
 
 
 app = FastAPI()
@@ -25,77 +38,78 @@ async def attachThreadToJVM_middleware(request: Request, call_next):
     return response
 
 
-@app.post("/smiles2molfile")
-async def smi2mf(item: Item):
-    molfile = smiles2molfile(item.structure)
-    if molfile:
-        return {"molfile": str(molfile)}
+@app.post("/convert")
+async def convert(item: Convert):
+    structure = convert_mol(item)
+    if structure:
+        return {"structure": str(structure)}
     else:
         raise HTTPException(
-            status_code=500, detail=f"smilesToMolfile failed for {item.structure}"
-        )
-
-
-@app.post("/molfile2smiles")
-async def mf2smi(item: Item):
-    smiles = molfile2smiles(item.structure)
-    if smiles:
-        return {"smiles": str(smiles)}
-    else:
-        raise HTTPException(
-            status_code=500, detail=f"molfile2smiles failed for {item.structure}"
+            status_code=500, detail=f"convert failed for {item.structure}"
         )
 
 
 @app.post("/addHydrogens")
-async def addHs(item: Item):
-    smiles = addHydrogens(item.structure)
-    if smiles:
-        return {"smiles": str(smiles)}
+async def addHydrogens(item: Structure):
+    structure = add_hydrogens(item)
+    if structure:
+        return {"structure": str(structure)}
     else:
         raise HTTPException(
-            status_code=500, detail=f"removeHydrogens failed for {item.structure}"
+            status_code=500, detail=f"addHydrogens failed for {item.structure}"
         )
 
 
 @app.post("/removeHydrogens")
-async def removeHs(item: Item):
-    smiles = removeHydrogens(item.structure)
-    if smiles:
-        return {"smiles": str(smiles)}
+async def removeHydrogens(item: Structure):
+    structure = remove_hydrogens(item)
+    if structure:
+        return {"structure": str(structure)}
     else:
         raise HTTPException(
             status_code=500, detail=f"removeHydrogens failed for {item.structure}"
         )
 
 
-@app.post("/addStereoelements")
-async def addStereo(item: Item):
-    smiles = addStereoelements(item.structure)
-    if smiles:
-        return {"smiles": str(smiles)}
+@app.post("/addStereoElements")
+async def addStereoElements(item: Structure):
+    structure = add_stereo_elements(item)
+    if structure:
+        return {"structure": str(structure)}
     else:
         raise HTTPException(
-            status_code=500, detail=f"addStereoelements failed for {item.structure}"
+            status_code=500, detail=f"addStereoElements failed for {item.structure}"
         )
 
 
-@app.post("/depictSmiles")
-async def depictSmiles(item: Item):
-    svg = depict(item.structure)
+@app.post("/depict")
+async def depict(item: Depict):
+    svg = depict_image(item)
     if svg:
         return {"svg": str(svg)}
     else:
         raise HTTPException(
-            status_code=500, detail=f"depictSmiles failed for {item.structure}"
+            status_code=500, detail=f"depict failed for {item.structure}"
         )
 
-@app.post("/opsin")
-async def n2s(item: Item):
-    smiles = name2structure(item.structure)
+
+@app.post("/molFormula")
+async def molFormula(item: Structure):
+    mol_formula = calculate_formula(item)
+    if mol_formula:
+        return {"molFormula": str(mol_formula)}
+    else:
+        raise HTTPException(
+            status_code=500, detail=f"molFormula failed for {item.structure}"
+        )
+
+
+@app.post("/name2structure")
+async def name2structure(item: Structure):
+    smiles = name_to_structure(item.structure)
     if smiles:
         return {"smiles": str(smiles)}
     else:
         raise HTTPException(
-            status_code=500, detail=f"opsin failed for {item.structure}"
+            status_code=500, detail=f"name2structure failed for {item.structure}"
         )

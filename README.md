@@ -7,13 +7,13 @@ Quick and dirty [FastAPI](https://github.com/tiangolo/fastapi) API to play a bit
   ```
   git clone https://github.com/eloyfelix/cdk_fastapi.git
   cd cdk_fastapi
-  podman build -t cdk_fastapi .
+  docker build -t cdk_fastapi .
   ```
 
 - Run the container using the image.
 
   ```
-  podman run -p8000:8000 cdk_fastapi
+  docker run -p8000:8000 cdk_fastapi
   ```
 
 - Open FastAPI docs:

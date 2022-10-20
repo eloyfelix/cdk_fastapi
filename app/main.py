@@ -80,14 +80,24 @@ async def addStereo(item: Item):
         )
 
 
-@app.post("/depictSmiles")
-async def depictSmiles(item: Item):
-    svg = depict(item.structure)
+@app.post("/depict")
+async def depict(item: Item):
+    svg = getDepiction(item.structure)
     if svg:
         return {"svg": str(svg)}
     else:
         raise HTTPException(
-            status_code=500, detail=f"depictSmiles failed for {item.structure}"
+            status_code=500, detail=f"depict failed for {item.structure}"
+        )
+
+@app.post("/molFormula")
+async def molFormula(item: Item):
+    mol_formula = calculateFormula(item.structure)
+    if mol_formula:
+        return {"molFormula": str(mol_formula)}
+    else:
+        raise HTTPException(
+            status_code=500, detail=f"opsin failed for {item.structure}"
         )
 
 @app.post("/opsin")
@@ -98,4 +108,14 @@ async def n2s(item: Item):
     else:
         raise HTTPException(
             status_code=500, detail=f"opsin failed for {item.structure}"
+        )
+
+@app.post("/wurcs")
+async def wurcs(item: Item):
+    wurcs = molfile2wurcs(item.structure)
+    if wurcs:
+        return {"wurcs": str(wurcs)}
+    else:
+        raise HTTPException(
+            status_code=500, detail=f"wurcs failed for {item.structure}"
         )
